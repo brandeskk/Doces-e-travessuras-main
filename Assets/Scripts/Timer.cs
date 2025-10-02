@@ -1,35 +1,45 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using TMPro;
 
 public class Timer : MonoBehaviour
 {
-    float timer = 180f;
-    bool tempoesgotado = false;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] TMP_Text timerText;
+
+    float timerRemaining = 60f;
+    bool timerIsRunning = true;
+
+    public GameObject panelLose; 
+
+    void Start ()
     {
-
+        panelLose.SetActive(false);
     }
-
-    // Update is called once per frame
     void Update()
     {
-        if (timer > 0)
+        if (timerIsRunning)
         {
-            timer = Time.deltaTime;
-            Debug.Log("Tempo restante: " + Mathf.Ceil(timer) + " segundos");
-        }
-        else if (tempoesgotado)
-        {
-            tempoesgotado = true;
-            timer = 0;
-            Derrota();
-        }
-        void Derrota()
-        {
-            Debug.Log("Tempo esgotado! Você perdeu!");
+            if (timerRemaining > 0)
+            {
+                timerRemaining -= Time.deltaTime;
+                UpdateTimerDisplay(timerRemaining);
+                
+            }
+            else
+            {
+                timerRemaining = 0;
+                timerIsRunning = false;
+                panelLose.SetActive(true); 
+                UpdateTimerDisplay(0);                
 
+            }
         }
+    }
+
+    void UpdateTimerDisplay(float timeToDisplay)
+    {
+        int minutes = Mathf.FloorToInt(timeToDisplay / 60);
+        int seconds = Mathf.FloorToInt(timeToDisplay % 60);
+        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 }
 
